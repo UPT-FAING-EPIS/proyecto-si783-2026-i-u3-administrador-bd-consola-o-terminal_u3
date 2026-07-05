@@ -1,357 +1,416 @@
-![./media/media/image1.png](./media/logo-upt.png)
+![](images/FD02/FD02_01.png)
 
-# UNIVERSIDAD PRIVADA DE TACNA
 
-# FACULTAD DE INGENIERÍA
+UNIVERSIDAD PRIVADA DE TACNA
 
-# Escuela Profesional de Ingeniería de Sistemas
 
-## Proyecto Administrador de BD en consola o terminal
+FACULTAD DE INGENIERÍA
 
-**Curso:** Base de Datos II
 
-**Docente:** Patrick Cuadros Quiroga
+Escuela Profesional de Ingeniería de Sistemas
 
-**Integrantes:**
 
-Jahuira Pilco, Dayan Elvis (2022075749)  
-Mamani Cori, Cristhian Carlos (2023077282)
 
----
+Proyecto Administrador de BD en consola o terminal
 
-**Tacna – Perú**  
-**2026**
 
----
+Curso: Base de Datos II
+
+
+
+Docente: Patrick Cuadros Quiroga
+
+
+
+Integrantes:
+
+
+Jahuira Pilco, Dayan Elvis					(2022075749)
+
+Mamani Cori, Cristhian Carlos				(2023077282)
+
+
+
+
+
+Tacna – Perú
+
+2026
+
+
+
+| CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES |
+| --- | --- | --- | --- | --- | --- |
+| Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
+| 1.0 | MPV | ELV | ARV | 26/04/2026 | Versión Original |
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Sistema Administrador de BD en consola o terminal
 
 # Documento de Visión
 
-**Versión 2.0**
 
----
+# Versión {1.0}
 
-## CONTROL DE VERSIONES
 
+| CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES |
+| --- | --- | --- | --- | --- | --- |
 | Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
-|---------|-----------|--------------|--------------|-------|--------|
-| 1.0 | DJ - CM | PC | PC | 04/04/2026 | Versión Original |
+| 1.0 | MPV | ELV | ARV | 26/04/2026 | Versión Original |
 
----
 
-## ÍNDICE GENERAL
 
-1. Introducción  
-2. Posicionamiento  
-3. Descripción de interesados y usuarios  
-4. Vista General del Producto  
-5. Características del producto  
-6. Restricciones  
-7. Rangos de calidad  
-8. Precedencia y Prioridad  
-9. Otros requerimientos del producto  
-10. Conclusiones  
-11. Recomendaciones  
-12. Bibliografía  
-13. Webgrafía  
+INDICE GENERAL
 
----
 
-## 1. Introducción
 
-### 1.1 Propósito
+Informe de Visión
 
-Definir la visión general del sistema “Administrador de Base de Datos en Consola”, estableciendo objetivos, alcance, características y actores involucrados.
+# Introducción
 
-### 1.2 Alcance
+## Propósito
 
-El sistema permitirá administrar bases de datos relacionales y no relacionales mediante CLI, ejecutando operaciones SQL. Se integra con seis gestores: PostgreSQL, MySQL y SQLite (relacionales), y MongoDB, Redis y Cassandra (NoSQL). Se distribuye además mediante una extensión de VS Code, un servidor MCP y un bot de Telegram (solo lectura).
+El presente documento tiene como propósito definir la visión general del sistema “Administrador de Base de Datos en Consola”, estableciendo sus objetivos, alcance, características principales y los actores involucrados. Sirve como guía para el desarrollo del proyecto y como base para la toma de decisiones durante su implementación.
 
-**Dentro del alcance:**
+## Alcance
 
-- Conexión a BD existentes (relacionales y NoSQL)  
-- Ejecución de SQL (SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER)  
-- Visualización en tabla  
-- Listado de tablas  
-- Manejo básico de errores  
-- Comando `help` y `exit`  
-- Consultas de solo lectura sobre MongoDB, Redis y Cassandra  
-- Generación de SQL desde lenguaje natural mediante IA (con respaldo por patrones)  
-- Distribución mediante extensión de VS Code, servidor MCP y bot de Telegram  
+El sistema permitirá administrar bases de datos relacionales y no relacionales mediante una interfaz de línea de comandos (CLI), ejecutando operaciones como creación de tablas, manipulación de datos (operaciones CRUD) y consultas SQL personalizadas. El sistema se integrará con seis gestores de bases de datos ampliamente utilizados: PostgreSQL, MySQL y SQLite (relacionales), y MongoDB, Redis y Cassandra (NoSQL). Adicionalmente, se distribuirá mediante una extensión de Visual Studio Code, un servidor MCP (Model Context Protocol) y un bot de Telegram en modo de solo lectura.
 
-**Fuera del alcance:**
+Dentro del alcance:
 
-- Motor de BD propio  
-- Interfaz gráfica  
-- Gestión de usuarios avanzada a nivel de SGBD  
-- Exportación (CSV, Excel, PDF)  
-- Conexión múltiple simultánea  
-- Backups automatizados  
-- Operaciones de escritura desde las integraciones externas (MCP y Telegram solo permiten lectura)  
+- Conexión a bases de datos existentes mediante parámetros de configuración.
 
----
+- Ejecución de comandos SQL directos (SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER).
 
-### 1.3 Definiciones
+- Visualización de resultados en formato tabular legible dentro de la consola.
 
-| Término | Definición |
-|--------|-----------|
-| BD | Base de datos |
-| CLI | Command Line Interface |
-| CRUD | Create, Read, Update, Delete |
-| DBMS | Sistema gestor de BD |
-| SQL | Structured Query Language |
-| DDL | Data Definition Language |
-| DML | Data Manipulation Language |
+- Listado de tablas disponibles en la base de datos conectada.
 
----
+- Manejo básico de errores de sintaxis y conexión.
 
-### 1.4 Referencias
+- Comando de ayuda integrado (help) para consultar instrucciones disponibles.
 
-- Documentación Python  
-- PostgreSQL  
-- MySQL  
-- SQLite  
-- Informe FD01  
+Comando para salir del programa (exit).
 
----
+- Conexión y consultas de solo lectura sobre motores NoSQL: MongoDB (find), Redis (comandos de lectura) y Cassandra (CQL).
 
-### 1.5 Visión General
+- Generación de consultas SQL a partir de lenguaje natural mediante IA (con respaldo por patrones si no hay clave de IA configurada).
 
-Desarrollar una herramienta CLI que permita interactuar con bases de datos de forma directa, reforzando el aprendizaje de SQL sin depender de interfaces gráficas.
+- Distribución del sistema mediante extensión de VS Code (Marketplace), servidor MCP (PyPI) y bot de Telegram (solo lectura).
 
----
+Fuera del alcance:
 
-## 2. Posicionamiento
+- Desarrollo de un motor de base de datos propio.
 
-### 2.1 Oportunidad de negocio
+- Interfaz gráfica de usuario (GUI).
 
-Existe necesidad educativa de herramientas CLI simplificadas para entender BD sin abstracciones gráficas.
+- Administración de usuarios y permisos a nivel de SGBD.
 
-### 2.2 Problema
+- Generación de reportes o exportación a otros formatos (CSV, Excel, PDF).
 
-Las herramientas actuales:
+- Conexión simultánea a múltiples bases de datos.
 
-- Ocultan procesos internos  
-- Son complejas en CLI para principiantes  
+- Funcionalidades de respaldo (backup) o restauración automatizada.
 
----
+- Operaciones de escritura (INSERT, UPDATE, DELETE, DROP, etc.) desde las integraciones externas: el servidor MCP y el bot de Telegram solo permiten consultas de lectura por motivos de seguridad.
 
-## 3. Interesados y Usuarios
+## Definiciones, Siglas y Abreviaturas
 
-### 3.1 Interesados
 
-| Interesado | Rol | Expectativa |
-|-----------|-----|------------|
-| Docente | Supervisor | Cumplimiento técnico |
-| Estudiantes dev | Desarrollo | Aprendizaje |
-| Estudiantes usuarios | Uso | Facilidad |
-| Universidad | Institución | Calidad académica |
+## Referencias
 
----
+- Documentación oficial de Python 3.8+
 
-### 3.2 Usuarios
+- Documentación oficial de PostgreSQL 13+
 
-| Usuario | Descripción | Frecuencia |
-|--------|-------------|-----------|
-| Básico | SQL básico | 1-2 veces/semana |
-| Intermedio | Consultas complejas | Varias veces |
-| Técnico | Admin BD | Diario |
+- Documentación oficial de MySQL 8.0+
 
----
+- Documentación oficial de SQLite 3
 
-### 3.3 Entorno
+- Informe de Factibilidad del proyecto (FD01) – Versión 1.0
 
-Uso en terminal (Windows, Linux, macOS).
+## Visión General
 
----
+La visión del proyecto es desarrollar una herramienta de administración de bases de datos basada en consola que permita a los usuarios interactuar de manera directa, eficiente y controlada con un sistema gestor de bases de datos, sin depender de interfaces gráficas que abstraen los procesos internos.
 
-### 3.4 Perfiles interesados
+El sistema busca ofrecer una experiencia simplificada pero funcional, enfocada en la ejecución de comandos SQL directos y estructurados, permitiendo realizar operaciones fundamentales de definición y manipulación de datos. A través de esta interacción, se pretende reforzar la comprensión de los procesos internos de gestión de datos y el uso práctico del lenguaje SQL.
 
-| Perfil | Responsabilidad |
-|-------|----------------|
-| Docente | Evaluar |
-| Estudiante | Desarrollar |
+Asimismo, la solución se orienta a un contexto educativo y técnico, donde la prioridad no es competir con herramientas profesionales existentes (como DBeaver, Navicat o pgAdmin), sino proporcionar un entorno controlado que facilite el aprendizaje progresivo de la administración de bases de datos y el desarrollo de aplicaciones basadas en comandos.
 
----
+La herramienta será compatible con tres sistemas gestores de bases de datos: PostgreSQL, MySQL y SQLite, permitiendo su aplicación en distintos entornos de desarrollo, desde bases de datos ligeras de archivo (SQLite) hasta servidores de producción (PostgreSQL/MySQL).
 
-### 3.5 Perfiles usuarios
+# Posicionamiento
 
-| Perfil | Conocimiento | Uso |
-|-------|--------------|-----|
-| Básico | SQL simple | help |
-| Intermedio | SQL avanzado | consultas |
-| Técnico | Admin BD | uso total |
+## Oportunidad de negocio
 
----
+Existe una oportunidad significativa en el ámbito educativo y formativo para desarrollar herramientas que permitan a los estudiantes comprender el funcionamiento interno de las bases de datos sin depender de interfaces gráficas. La mayoría de las herramientas comerciales y de código abierto actuales priorizan la facilidad de uso mediante interfaces visuales, lo que, si bien es útil en entornos productivos, limita la comprensión técnica de los procesos subyacentes.
 
-### 3.6 Necesidades
+En el entorno profesional, el uso de interfaces de línea de comandos es predominante en servidores y entornos de automatización, donde la eficiencia, el bajo consumo de recursos y la capacidad de scripting son valorados. Sin embargo, estas herramientas profesionales presentan una curva de aprendizaje elevada.
 
-| Necesidad | Prioridad |
-|----------|----------|
-| Acceso simple CLI | Alta |
-| Aprender SQL | Alta |
-| Ligero | Media |
-| Feedback claro | Media |
-| Documentación | Alta |
+El proyecto aprovecha esta brecha ofreciendo una solución intermedia: una CLI simplificada, didáctica y funcional, que permite aprender y administrar bases de datos sin las complejidades de herramientas como psql (PostgreSQL) o mysql (cliente MySQL), pero conservando la esencia de la interacción por comandos.
 
----
+## Definición del problema
 
-## 4. Vista General
+Las herramientas actuales de administración de bases de datos suelen abstraer los procesos internos mediante interfaces gráficas, limitando la comprensión técnica. Además, en entornos sin interfaz gráfica, el uso de herramientas de consola puede resultar complejo para usuarios no experimentados.
 
-### 4.1 Perspectiva
+# Descripción de los interesados y usuarios
 
-Aplicación Python que actúa como intermediario entre usuario y DBMS.
+## Resumen de los interesados
 
----
 
-### 4.2 Capacidades
+## Resumen de los usuarios
 
-- Conexión BD  
-- SQL  
-- CRUD  
-- Tablas  
-- Resultados  
 
----
+## Entorno de usuario
 
-### 4.3 Suposiciones
+El sistema será utilizado en entornos de desarrollo local, mediante terminal o consola, en sistemas operativos como Windows (CMD, PowerShell, Windows Terminal), Linux (Bash, Zsh) o macOS (Terminal, iTerm2). No se requiere conexión a internet para su funcionamiento básico, salvo para la instalación inicial de dependencias.
 
-- BD instalada  
-- Librerías disponibles  
+## Perfiles de los interesados
 
----
 
-### 4.4 Costos
+## Perfiles de los Usuarios
 
-| Categoría | Total S/. |
-|----------|-----------|
-| Generales | 5,040 |
-| Operativos | 1,060 |
-| Ambiente | 320 |
-| Personal | 12,000 |
-| **Total** | **18,420** |
 
----
+## Necesidades de los interesados y usuarios
 
-### 4.5 Licencia
 
-Licencia MIT.
+# Vista General del Producto
 
----
+## Perspectiva del producto
 
-## 5. Características
+El sistema es una aplicación independiente desarrollada en Python 3.8+ que actúa como intermediario entre el usuario y el sistema gestor de base de datos. No reemplaza al SGBD, sino que se conecta a uno existente, interpreta los comandos ingresados por el usuario (que pueden ser SQL directo o comandos internos del sistema) y ejecuta las operaciones correspondientes.
 
-**MUST**
+## Resumen de capacidades
 
-- Conexión BD  
-- SQL  
-- Tablas  
-- help / exit  
-- Manejo errores  
+- Conexión a bases de datos
 
-**SHOULD**
+- Ejecución de comandos SQL
 
-- tables  
-- info  
-- disconnect  
-- clear  
-- Conexión y consultas de lectura sobre MongoDB, Redis y Cassandra  
+- Gestión de tablas
 
-**COULD**
+- Operaciones CRUD
 
-- help avanzado  
-- historial  
-- exportación CSV  
-- Generación de SQL desde lenguaje natural (comando preguntar)  
-- Distribución vía VS Code, servidor MCP y bot de Telegram  
+- Visualización de resultados en consola
 
----
+## Suposiciones y dependencias
 
-## 6. Restricciones
+- El usuario cuenta con una base de datos previamente instalada
 
-- Conocimiento SQL  
-- BD instalada  
-- Sin GUI  
-- Dependencias Python  
-- Tiempo 4 meses  
-- Integraciones externas (MCP/Telegram) solo de lectura, sin excepción  
+- Disponibilidad de librerías de conexión en Python
 
----
+- Acceso a un entorno de ejecución adecuado
 
-## 7. Calidad
+## Costos y precios
 
-- Usabilidad < 2 min  
-- Fallos < 1%  
-- Respuesta < 1s  
-- Multiplataforma  
+El proyecto se desarrolla con fines académicos y no tiene un modelo de negocio asociado. Sin embargo, para efectos de simulación profesional, se presentan los costos estimados de desarrollo y los precios de referencia si el producto fuera comercializado.
 
----
+Costos de desarrollo (tomados del informe de factibilidad FD01):
 
-## 8. Prioridad
 
-1. REPL  
-2. SQLite  
-3. SQL  
-4. Tabla  
-5. PostgreSQL  
-6. MySQL  
+## Licenciamiento e instalación
 
----
+El proyecto utiliza Licencia MIT, que permite el uso, copia, modificación, fusión, publicación, distribución, sublicencia y venta del software, siempre que se incluya el aviso de copyright y la licencia en las distribuciones. Esta licencia es compatible con el uso académico y comercial.
 
-## 9. Otros requerimientos
+# Características del producto
 
-### Legales
+MUST (Indispensables)
 
-- Licencia MIT  
-- Código propio  
-- Cumplimiento de acuerdos de publicación (VS Code Marketplace, PyPI, Telegram Bot API), sin costo  
+- Conexión a bases de datos (PostgreSQL, MySQL, SQLite).
 
-### Comunicación
+- Ejecución de comandos SQL (SELECT, INSERT, UPDATE, DELETE).
 
-- Mensajes claros  
-- Tablas ASCII  
+- Visualización de resultados en formato tabla.
 
-### Plataforma
+- Comando de ayuda (help).
 
-- Windows/Linux/macOS  
-- Python 3.8+  
+- Comando para salir (exit).
 
-### Calidad y Seguridad
+- Manejo básico de errores.
 
-- Código modular  
-- No guardar credenciales  
-- El servidor MCP y el bot de Telegram validan cada comando contra un patrón de solo lectura, rechazando cualquier escritura  
+SHOULD (Importantes)
 
----
+- Listado de tablas de la base de datos (tables).
 
-## 10. Conclusiones
+- Información de la conexión activa (info).
 
-El sistema es viable, educativo y funcional para administración de BD mediante CLI.
+- Desconexión de la base de datos (disconnect).
 
----
+- Limpiar pantalla (cls / clear).
 
-## 11. Recomendaciones
+- Conexión y consultas de lectura sobre MongoDB, Redis y Cassandra.
 
-- Probar con los 3 motores  
-- Preparar demo  
-- Verificar terminal  
-- Documentar README  
+COULD (Opcionales)
 
----
+- Ayuda específica por comando (help connect).
 
-## 12. Bibliografía
+- Historial de comandos entre sesiones.
 
-- Ramakrishnan  
-- Silberschatz  
-- Beaulieu  
-- Python Docs  
+- Exportación de resultados a CSV.
 
----
+- Generación de consultas SQL a partir de lenguaje natural mediante IA (comando preguntar).
 
-## 13. Webgrafía
+- Distribución mediante extensión de VS Code, servidor MCP y bot de Telegram.
 
-- https://docs.python.org  
-- https://postgresql.org  
-- https://dev.mysql.com  
-- https://sqlite.org  
+# Restricciones
+
+- El usuario debe tener conocimientos básicos de SQL.
+
+- Se requiere tener instalado previamente el motor de base de datos (PostgreSQL, MySQL o SQLite).
+
+- Las contraseñas se ingresan en texto plano por consola.
+
+- El sistema no cuenta con interfaz gráfica, solo funciona por terminal.
+
+- Dependencia de librerías externas de Python.
+
+- Plazo de desarrollo de 4 meses por ser proyecto académico.
+
+- Las integraciones externas (MCP y Telegram) solo permiten operaciones de lectura, sin excepción.
+
+# Rangos de calidad
+
+- Usabilidad: Usuario nuevo logra conectarse en menos de 2 minutos usando el comando help.
+
+- Confiabilidad: Tasa de fallos en comandos SQL válidos menor al 1%.
+
+- Rendimiento: Respuesta menor a 1 segundo para consultas simples.
+
+- Portabilidad: Funciona en Windows, Linux y macOS con Python 3.8+.
+
+- Robustez: El sistema no colapsa ante errores, permite seguir ingresando comandos.
+
+# Precedencia y Prioridad
+
+Orden recomendado de desarrollo:
+
+- Bucle REPL básico (help, exit)
+
+- Conexión a SQLite (más simple, sin servidor)
+
+- Ejecución de comandos SQL
+
+- Visualización de resultados en tabla
+
+- Conexión a PostgreSQL
+
+- Conexión a MySQL
+
+- Comando tables
+
+- Comando disconnect
+
+- Comando info
+
+- Comando cls / clear
+
+# Otros requerimientos del producto
+
+- Estandares legales
+
+El desarrollo del proyecto debe cumplir con las siguientes normas:
+
+- Propiedad intelectual: El código desarrollado es propiedad de los autores. Se utilizará licencia MIT para permitir uso académico y libre distribución.
+
+- Software de código abierto: Todas las librerías utilizadas (Python, mysql-connector, psycopg2, pymongo, redis, cassandra-driver, prompt_toolkit, python-telegram-bot, mcp) son de código abierto con licencias permisivas, sin necesidad de pago por su uso. La publicación en Visual Studio Code Marketplace, PyPI y la API de Bots de Telegram se realiza conforme a los acuerdos de publicación de cada plataforma, sin costo asociado.
+
+- Protección de datos: El sistema no almacena ni procesa datos personales de los usuarios, solo actúa como interfaz para consultar bases de datos externas
+
+- Estandares de comunicación
+
+- Los mensajes del sistema utilizan iconos claros: ✅ para éxito, ❌ para error, ℹ️ para información.
+
+- El comando help muestra todos los comandos disponibles de forma organizada.
+
+- Los resultados de consultas se muestran en formato de tabla con bordes ASCII.
+
+- Los errores se muestran con mensajes descriptivos y en español, sin mostrar código técnico interno.
+
+- Estandaraes de cumplimiento de la plataforma
+
+- Multiplataforma: El sistema funciona en Windows, Linux y macOS sin modificaciones.
+
+- Terminal: Compatible con cualquier terminal estándar (CMD, PowerShell, Bash, Zsh).
+
+- Python: Requiere Python 3.8 o superior instalado en el sistema.
+
+- Dependencias: Se incluye archivo requirements.txt para instalar todas las librerías necesarias.
+
+- Estandaraes de calidad y seguridad
+
+Calidad:
+
+- Código modular y documentado con docstrings.
+
+- Seguimiento de las convenciones PEP 8 de Python.
+
+- Manejo de errores para evitar que el programa colapse.
+
+- Interfaz de consola clara y fácil de usar.
+
+Seguridad:
+
+- Las credenciales no se almacenan en archivos ni logs.
+
+- Las conexiones se cierran explícitamente al salir o usar disconnect.
+
+- Validación básica de comandos internos.
+
+- No se concatenan parámetros del usuario en consultas internas (como la de listar tablas).
+
+- El servidor MCP y el bot de Telegram validan cada comando contra un patrón de solo lectura antes de ejecutarlo, rechazando cualquier operación de escritura.
+
+# CONCLUSIONES
+
+El proyecto Administrador de BD en consola o terminal es una solución viable que permite a los usuarios interactuar con bases de datos mediante comandos SQL desde una interfaz de línea de comandos.
+
+El sistema cumple con los objetivos planteados: permite conectarse a PostgreSQL, MySQL y SQLite, ejecutar operaciones CRUD, mostrar resultados en formato tabla y manejar errores básicos.
+
+El análisis de factibilidad confirma que el proyecto es viable desde las perspectivas técnica, económica, operativa, legal, social y ambiental.
+
+La herramienta tiene un alto valor educativo, ya que permite a los estudiantes comprender el funcionamiento interno de las bases de datos sin depender de interfaces gráficas.
+
+El código desarrollado es modular y extensible, lo que facilita su mantenimiento y la incorporación de nuevas funcionalidades en el futuro.
+
+# RECOMENDACIONES
+
+Realizar pruebas con cada uno de los tres motores de base de datos soportados antes de la presentación.
+
+Preparar un script de demostración que muestre una conexión exitosa, una consulta SELECT con varias filas y un ejemplo de manejo de errores.
+
+Verificar que la terminal utilizada durante la presentación soporte caracteres Unicode para que las tablas se muestren correctamente.
+
+Incluir instrucciones claras de instalación y uso en un archivo README.
+
+Para versiones futuras, implementar enmascaramiento de contraseñas usando el módulo getpass de Python.
+
+# BIBLIOGRAFIA
+
+Ramakrishnan, R., & Gehrke, J. (2003). Sistemas de Gestión de Bases de Datos (3ª ed.). McGraw-Hill.
+
+Silberschatz, A., Korth, H. F., & Sudarshan, S. (2019). Database System Concepts (7ª ed.). McGraw-Hill Education.
+
+Beaulieu, A. (2020). Learning SQL (3ª ed.). O'Reilly Media.
+
+Python Software Foundation. (2026). The Python Standard Library.
+
+# WEBGRAFIA
+
+Python.org. (2026). *Python 3.8+ Documentation*. Recuperado de https://docs.python.org/3/
+
+PostgreSQL Global Development Group. (2026). PostgreSQL Documentation. Recuperado de https://www.postgresql.org/docs/
+
+Oracle Corporation. (2026). MySQL Documentation. Recuperado de https://dev.mysql.com/doc/
+
+SQLite Consortium. (2026). SQLite Documentation. Recuperado de https://www.sqlite.org/docs.html
+
