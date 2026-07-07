@@ -1,326 +1,260 @@
 ![](images/FD06/FD06_01.png)
 
-
 UNIVERSIDAD PRIVADA DE TACNA
 
-
-FACULTAD DE INGENIERIA
-
+FACULTAD DE INGENIERÍA
 
 Escuela Profesional de Ingeniería de Sistemas
 
-
-
-Informe Final
-
-
 Proyecto Administrador de BD en consola o terminal
-
 
 Curso: Base de Datos II
 
-
-
 Docente: Patrick Cuadros Quiroga
-
-
 
 Integrantes:
 
+Jahuira Pilco, Dayan Elvis  (2022075749)
 
-Jahuira Pilco, Dayan Elvis		(2022075749)
-
-Mamani Cori, Cristhian Carlos	(2023077282)
-
-
-
-
-
-
+Mamani Cori, Cristhian Carlos  (2023077282)
 
 Tacna – Perú
 
 2026
 
+---
 
+## CONTROL DE VERSIONES
 
 | Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
 | --- | --- | --- | --- | --- | --- |
-| 1.0 | DEJ | CCM | PCQ | 04/07/2026 | Versión Original |
-
+| 1.0 | DJ - CM | PCQ | PCQ | 26/04/2026 | Versión Original |
+| 2.0 | DJ - CM | PCQ | PCQ | 06/06/2026 | Versión 2.0 |
+| 3.0 | DJ - CM | PCQ | PCQ | 06/07/2026 | Versión Final |
 
 Sistema Administrador de BD en consola o terminal
 
-Documento de Diccionario de Datos
+Documento de diccionario de datos
 
-Versión 1.0
+Versión 3.0
 
-Nota: El sistema no cuenta con un motor de base de datos propio; actúa como intermediario hacia motores externos. Por ello, este diccionario documenta las estructuras internas de datos de la aplicación (clases conectoras, excepciones y variables de sesión).
+---
 
+## ÍNDICE GENERAL
 
-# ÍNDICE GENERAL
+1. [Introducción](#introducción)
+2. [Modelo lógico](#1-modelo-lógico)
+3. [Diccionario de datos](#2-diccionario-de-datos)
+   - a. Tabla Usuario
+   - b. Tabla Auditoria
+   - c. Tabla Tarea_programada
+   - d. Tabla Bookmark
+   - e. Tabla Descarga
+   - f. Tabla Conexion_bd
+   - g. Tabla Esquema_externo
+4. [Relaciones entre entidades](#3-relaciones-entre-entidades)
+5. [Reglas de negocio](#4-reglas-de-negocio)
+   - a. Gestión de Usuarios y Roles
+   - b. Gestión de Conexiones y Motores de Base de Datos
+   - c. Gestión de Tareas Programadas
+   - d. Gestión de Bookmarks y Consultas
+   - e. Gestión de Analítica y Descargas
+6. [Objetos de la Base de Datos](#5-objetos-de-la-base-de-datos)
+7. [Conclusiones](#6-conclusiones)
+8. [Recomendaciones](#7-recomendaciones)
+9. [Bibliografía](#8-bibliografía)
 
+---
 
-# Introducción
+## Introducción
 
-El presente documento describe el Diccionario de Datos del sistema “Administrador de BD en consola o terminal” (dbcli), una herramienta de línea de comandos que permite conectarse y administrar motores de bases de datos relacionales (SQLite, MySQL, PostgreSQL) y no relacionales (MongoDB, Redis, Cassandra).
+El presente documento constituye el **Diccionario de Datos** del proyecto *Administrador de BD en consola o terminal (NexusDB)*, desarrollado en el marco del curso de Base de Datos II de la Escuela Profesional de Ingeniería de Sistemas de la Universidad Privada de Tacna. Su propósito es describir de manera formal y detallada las estructuras de información que administra el sistema, incluyendo entidades, atributos, tipos de dato, restricciones y relaciones, con el fin de dejar constancia técnica de cómo se organiza y persiste la información dentro de la aplicación.
 
-A diferencia de un sistema tradicional, dbcli no incluye un motor de base de datos propio ni un esquema de almacenamiento persistente: actúa únicamente como una capa intermediaria entre el usuario y los distintos SGBD externos. Por esta razón, el presente diccionario de datos documenta las estructuras internas de la aplicación —clases conectoras, excepciones, formateador de resultados y variables de sesión— que constituyen el modelo de datos con el que trabaja el sistema durante su ejecución.
+A diferencia de un sistema tradicional con una base de datos propia y centralizada, NexusDB fue concebido como una **herramienta cliente e intermediaria**, capaz de conectarse, administrar y ejecutar consultas sobre múltiples motores de bases de datos externos —SQLite, MySQL, PostgreSQL, MongoDB, Redis y Cassandra— desde una única interfaz de consola. Por esta razón, el presente diccionario documenta principalmente las estructuras internas de soporte de la aplicación (usuarios, tareas programadas, bookmarks, auditoría y analítica de descargas), y no un esquema relacional propio de gran escala.
 
-Este documento cumple la misma función que un diccionario de datos convencional: servir de referencia para desarrolladores que deseen extender el sistema (por ejemplo, agregando un nuevo conector) y para comprender cómo se organiza, transporta y descarta la información dentro de la aplicación.
+A lo largo del documento se detallan las tablas y entidades identificadas, sus campos con la descripción, tipo de dato, longitud y restricciones correspondientes, así como las relaciones existentes entre ellas expresadas mediante su cardinalidad (1:N, N:1, entre otras). Asimismo, se aclara explícitamente qué elementos típicos de un diccionario de datos —como procedimientos almacenados, triggers y eventos de base de datos— no aplican al proyecto, justificando el motivo arquitectónico de dicha ausencia.
 
-# Modelo de Clases
+Finalmente, este documento busca servir como referencia técnica tanto para el equipo de desarrollo como para futuras iteraciones del proyecto, facilitando el mantenimiento del sistema actual y sentando las bases para una eventual evolución hacia un modelo de persistencia más robusto, en caso de que el proyecto requiera escalar sus capacidades de almacenamiento y trazabilidad.
 
-El modelo de clases se organiza en tres capas principales: la capa de presentación (REPL y TableFormatter), la capa de conectores (BaseConnector, BaseNoSQLConnector y sus implementaciones concretas) y la capa de manejo de errores (módulo exceptions). Los conectores relacionales (SQLiteConnector, MySQLConnector, PostgresConnector) y no relacionales (MongoDBConnector, RedisConnector, CassandraConnector) heredan de una clase base común, lo que permite que el REPL —y las integraciones externas de VS Code, MCP y Telegram— interactúen con cualquier motor mediante la misma interfaz, sin conocer los detalles particulares de cada SGBD. El detalle gráfico de este modelo se encuentra en el Diagrama de Clases del Documento de Arquitectura de Software (FD04, sección 3.2.5).
+---
 
-# Diccionario de Datos (Estructuras Internas)
+## 1. Modelo lógico
 
-## a. Clase BaseConnector
+En esta sección se muestra el modelo lógico de la base de datos representado mediante un diagrama Entidad-Relación (DER).
 
-Clase abstracta que define el contrato común para todos los conectores relacionales. No se instancia directamente.
+```mermaid
+erDiagram
+    USUARIO ||--o{ AUDITORIA : "1:N"
+    USUARIO ||--o{ TAREA_PROGRAMADA : "1:N"
+    USUARIO ||--o{ BOOKMARK : "1:N"
+    TAREA_PROGRAMADA }o--|| CONEXION_BD : "N:1"
+    CONEXION_BD ||--o{ ESQUEMA_EXTERNO : "1:N"
+    DESCARGA
+```
 
-| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| connect(**kwargs) | Establece la conexión con el motor de base de datos usando los parámetros recibidos (db, user, password, host, etc.) | bool | N/A | Método abstracto, obligatorio en subclases |
-| disconnect() | Cierra la conexión activa y libera los recursos asociados | bool | N/A | Método abstracto |
-| execute_query(query) | Ejecuta una instrucción SQL sobre la conexión activa | Tuple[headers, rows, rowcount] | N/A | Método abstracto |
-| get_tables() | Retorna el listado de tablas existentes en la base de datos conectada | List[str] | N/A | Método abstracto |
-| get_type() | Retorna el nombre del motor de base de datos (SQLite, MySQL, PostgreSQL) | str | N/A | Método abstracto |
-| get_info() | Retorna información resumida de la conexión activa (host, usuario, BD) | str | N/A | Método abstracto |
+| Relación | Cardinalidad |
+|---|---|
+| USUARIO → AUDITORIA | 1:N |
+| USUARIO → TAREA_PROGRAMADA | 1:N |
+| USUARIO → BOOKMARK | 1:N |
+| TAREA_PROGRAMADA → CONEXION_BD | N:1 |
+| CONEXION_BD → ESQUEMA_EXTERNO | 1:N |
+| DESCARGA | 0 (entidad independiente) |
 
+---
 
-## b. Clase SQLiteConnector
+## 2. Diccionario de datos
 
-Hereda de BaseConnector. Gestiona la conexión a archivos de base de datos SQLite locales.
-
-| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| ruta | Ruta del archivo de base de datos SQLite (.db) | str | N/A | Obligatorio en connect() |
-| connect(ruta) | Abre o crea el archivo SQLite indicado | bool | N/A | Override de BaseConnector |
-| execute_query(query) | Ejecuta sentencias SQL (SELECT, INSERT, UPDATE, DELETE, CREATE, DROP) sobre el archivo | Tuple | N/A | Override |
-| get_tables() | Lista las tablas contenidas en el archivo SQLite | List[str] | N/A | Override |
-
-
-## c. Clase MySQLConnector
-
-Hereda de BaseConnector. Gestiona la conexión a servidores MySQL mediante la librería mysql-connector-python.
-
-| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| db | Nombre de la base de datos MySQL a la que se desea conectar | str | N/A | Obligatorio |
-| user | Usuario de conexión al servidor | str | N/A | Obligatorio |
-| password | Contraseña del usuario, ingresada en texto plano | str | N/A | Obligatorio |
-| host | Dirección del servidor MySQL | str | N/A | Opcional, por defecto localhost |
-| connect(db, user, password, host) | Establece la conexión con el servidor MySQL indicado | bool | N/A | Override de BaseConnector |
-| execute_query(query) | Ejecuta sentencias SQL sobre la conexión MySQL activa | Tuple | N/A | Override |
-
-
-## d. Clase PostgresConnector
-
-Hereda de BaseConnector. Gestiona la conexión a servidores PostgreSQL mediante la librería psycopg2.
-
-| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| db | Nombre de la base de datos PostgreSQL a la que se desea conectar | str | N/A | Obligatorio |
-| user | Usuario de conexión al servidor | str | N/A | Obligatorio |
-| password | Contraseña del usuario, ingresada en texto plano | str | N/A | Obligatorio |
-| host | Dirección del servidor PostgreSQL | str | N/A | Opcional, por defecto localhost |
-| connect(db, user, password, host) | Establece la conexión con el servidor PostgreSQL indicado | bool | N/A | Override de BaseConnector |
-| execute_query(query) | Ejecuta sentencias SQL sobre la conexión PostgreSQL activa | Tuple | N/A | Override |
-
-
-## e. Clase BaseNoSQLConnector
-
-Clase abstracta que hereda de BaseConnector y extiende el contrato para motores no relacionales.
+### a. Tabla Usuario
 
 | Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| list_collections() | Retorna las colecciones, keyspaces o bases lógicas del motor NoSQL conectado | List[str] | N/A | Método abstracto |
+|---|---|---|---|---|
+| nombre | Nombre de usuario (login) | VARCHAR | 50 | PK, NOT NULL |
+| password_hash | Hash SHA-256 de la contraseña | VARCHAR | 64 | NOT NULL |
+| rol | Rol asignado (admin, operador, etc.) | VARCHAR | 20 | NOT NULL |
+| creado | Fecha y hora de creación del usuario | DATETIME | - | NOT NULL |
 
-
-## f. Clase MongoDBConnector
-
-Hereda de BaseNoSQLConnector. Gestiona la conexión a MongoDB mediante la librería pymongo.
-
-| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| db | Nombre de la base de datos Mongo a la que se desea conectar | str | N/A | Obligatorio |
-| host | Dirección del servidor MongoDB | str | N/A | Opcional, por defecto localhost |
-| puerto | Puerto de conexión al servidor MongoDB | int | 5 | Opcional, por defecto 27017 |
-| find(coleccion, json_filtro) | Consulta documentos de una colección que cumplen el filtro JSON indicado | List[dict] | N/A | Equivalente a SELECT; solo lectura en MCP/Telegram |
-| insert(coleccion, json_doc) | Inserta un nuevo documento en la colección indicada | bool | N/A | No disponible en MCP/Telegram |
-| update(coleccion, filtro, set) | Actualiza los documentos que cumplen el filtro indicado | int (docs. afectados) | N/A | No disponible en MCP/Telegram |
-| delete(coleccion, json_filtro) | Elimina los documentos que cumplen el filtro indicado | int (docs. afectados) | N/A | No disponible en MCP/Telegram |
-
-
-## g. Clase RedisConnector
-
-Hereda de BaseNoSQLConnector. Gestiona la conexión a Redis mediante la librería redis-py.
+### b. Tabla Auditoria
 
 | Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| db_index | Índice de base de datos lógica de Redis (0 a 15) | int | 2 | Opcional, por defecto 0 |
-| host | Dirección del servidor Redis | str | N/A | Opcional, por defecto localhost |
-| puerto | Puerto de conexión al servidor Redis | int | 4 | Opcional, por defecto 6379 |
-| set(clave, valor) | Asigna un valor de tipo cadena a una clave | bool | N/A | No disponible en MCP/Telegram |
-| get(clave) | Obtiene el valor asociado a una clave | str | N/A | Equivalente a SELECT; solo lectura en MCP/Telegram |
-| del(clave) | Elimina una clave del almacén Redis | bool | N/A | No disponible en MCP/Telegram |
-| keys(patron) | Lista las claves que cumplen un patrón de búsqueda | List[str] | N/A | Solo lectura en MCP/Telegram |
+|---|---|---|---|---|
+| id | Identificador de auditoría | INT | 11 | PK, NOT NULL |
+| usuario | Usuario que ejecutó la acción | VARCHAR | 50 | FK, NOT NULL |
+| accion | Descripción de la acción realizada | VARCHAR | 255 | NOT NULL |
 
-
-## h. Clase CassandraConnector
-
-Hereda de BaseNoSQLConnector. Gestiona la conexión a Cassandra mediante la librería cassandra-driver.
+### c. Tabla Tarea_programada
 
 | Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| keyspace | Espacio de claves (keyspace) de Cassandra al que se desea conectar | str | N/A | Obligatorio |
-| host | Nodo del clúster Cassandra | str | N/A | Opcional, por defecto localhost |
-| execute_query(cql) | Ejecuta sentencias CQL (SELECT, INSERT, UPDATE, DELETE) | Tuple | N/A | Override de BaseConnector |
-| get_tables() | Lista las tablas definidas dentro del keyspace conectado | List[str] | N/A | Override |
+|---|---|---|---|---|
+| id | Identificador de la tarea | INT | 11 | PK, NOT NULL |
+| usuario | Usuario que creó la tarea | VARCHAR | 50 | FK, NOT NULL |
+| comando | Comando SQL a ejecutar | VARCHAR | 500 | NOT NULL |
 
-
-## i. Clase REPL
-
-Clase principal del sistema. Implementa el bucle de lectura, interpretación y ejecución de comandos (Read-Eval-Print Loop).
+### d. Tabla Bookmark
 
 | Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| running | Indica si el bucle principal del REPL sigue activo | bool | 1 | NOT NULL, valor inicial True |
-| modo | Modo de operación seleccionado al inicio (Relacional o NoSQL) | str | N/A | NOT NULL, definido en CU001 |
-| conector | Instancia activa del conector actualmente conectado | BaseConnector | N/A | Nulo si no existe conexión activa; una sola instancia a la vez |
-| formateador | Instancia de TableFormatter usada para mostrar resultados en consola | TableFormatter | N/A | NOT NULL |
-| last_results | Resultado (filas y cabeceras) de la última consulta SELECT/find ejecutada | List[Tuple] | N/A | Volátil; se descarta al ejecutar una nueva consulta o cerrar el programa |
-| run() | Inicia el bucle principal de lectura de comandos del usuario | void | N/A |  |
-| execute(comando) | Analiza el comando ingresado y lo despacha al manejador correspondiente | void | N/A |  |
-| _connect(parametros) | Maneja el comando 'connect' e instancia el conector adecuado | void | N/A |  |
-| _select(parametros) | Maneja los comandos 'select'/'find' y almacena el resultado en last_results | void | N/A |  |
-| _insert(parametros) | Maneja los comandos 'insert into'/'insert' | void | N/A |  |
-| _update(parametros) | Maneja los comandos 'update' | void | N/A |  |
-| _delete(parametros) | Maneja los comandos 'delete'/'del' | void | N/A |  |
-| _export(archivo) | Exporta el contenido de last_results a un archivo CSV | void | N/A | Requiere una consulta SELECT previa |
-| _help() | Muestra los comandos disponibles según el modo activo (relacional o NoSQL) | void | N/A |  |
-| _status() | Muestra el estado de la conexión activa (tipo de motor, host, base de datos) | void | N/A |  |
+|---|---|---|---|---|
+| alias | Nombre corto asignado a la consulta | VARCHAR | 50 | PK, NOT NULL |
+| usuario | Usuario propietario del bookmark | VARCHAR | 50 | FK, NOT NULL |
+| sql_query | Consulta SQL guardada | VARCHAR | 500 | NOT NULL |
 
-
-## j. Clase TableFormatter
-
-Se encarga de dar formato tabular a los resultados de las consultas, utilizando la librería Rich.
+### e. Tabla Descarga
 
 | Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| print_table(datos, filas) | Formatea y muestra en consola los resultados recibidos, incluyendo el total de filas | void | N/A | NOT NULL |
+|---|---|---|---|---|
+| id | Identificador de descarga | INT | 11 | PK, NOT NULL |
+| ip | Dirección IP del solicitante | VARCHAR | 15 | NOT NULL |
+| file_name | Nombre del archivo descargado | VARCHAR | 100 | NOT NULL |
 
-
-## k. Módulo exceptions
-
-Contiene las excepciones personalizadas utilizadas para el manejo estructurado de errores en toda la aplicación.
-
-| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| ConnectionError | Excepción lanzada ante fallos al establecer o mantener la conexión con el motor de base de datos | Exception | N/A | Hereda de Exception |
-| SyntaxError | Excepción lanzada cuando un comando ingresado no respeta la sintaxis básica esperada | Exception | N/A | Hereda de Exception |
-| QueryError | Excepción lanzada cuando la ejecución de una consulta falla en el motor de base de datos | Exception | N/A | Hereda de Exception |
-
-
-## l. Variables de Sesión y Configuración
-
-Datos que existen únicamente en memoria durante la ejecución del programa y que no se persisten entre sesiones.
+### f. Tabla Conexion_bd
 
 | Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
-| --- | --- | --- | --- | --- |
-| last_results | Resultado de la última consulta SELECT/find ejecutada, disponible para exportación a CSV | List[Tuple] | N/A | Volátil; se descarta al cerrar el programa o ejecutar una nueva consulta |
-| credenciales_conexion | Parámetros de conexión ingresados por el usuario en el comando connect (db, user, password, host) | dict | N/A | No se almacena en disco ni en logs; se solicita en cada inicio de sesión |
-| modo_operacion | Modo seleccionado al iniciar el programa (Relacional / NoSQL) | str | N/A | Determina los comandos disponibles en help() |
+|---|---|---|---|---|
+| tipo_motor | Motor de base de datos externo | VARCHAR | 20 | PK, NOT NULL |
+| host | Dirección del servidor de BD | VARCHAR | 100 | NOT NULL |
+| estado | Estado actual de la conexión | VARCHAR | 20 | NOT NULL |
 
+### g. Tabla Esquema_externo
 
-# Relaciones entre Clases
+| Campo | Descripción | Tipo de Dato | Longitud | Restricciones |
+|---|---|---|---|---|
+| nombre_tabla | Nombre de la tabla introspectada | VARCHAR | 100 | PK, NOT NULL |
+| tipo_motor | Motor de BD al que pertenece | VARCHAR | 20 | FK, NOT NULL |
+| nombre_columna | Nombre de la columna detectada | VARCHAR | 100 | PK, NOT NULL |
 
-- El REPL mantiene una única instancia activa de un conector (BaseConnector) a la vez; para cambiar de motor, primero debe desconectarse.
+---
 
-- SQLiteConnector, MySQLConnector y PostgresConnector heredan de BaseConnector e implementan sus métodos abstractos según el motor relacional correspondiente.
+## 3. Relaciones entre entidades
 
-- MongoDBConnector, RedisConnector y CassandraConnector heredan de BaseNoSQLConnector, que a su vez extiende BaseConnector.
+- Un **usuario** puede tener uno o varios **bookmarks** guardados, para reutilizar consultas SQL frecuentes.
+- Un **usuario** puede crear una o varias **tareas programadas**, que se ejecutan automáticamente sobre una **conexión de base de datos**.
+- Un **usuario** genera uno o varios registros de **auditoría**, que documentan sus acciones dentro del sistema (login, logout, comandos ejecutados).
+- Una **tarea programada** se ejecuta sobre una **conexión de base de datos**, indicando el motor externo (SQLite, MySQL, PostgreSQL, MongoDB, Redis o Cassandra) donde correrá el comando.
+- Una **conexión de base de datos** expone uno o varios registros de **esquema externo**, correspondientes a las tablas y columnas detectadas por introspección en el motor conectado.
+- Una **descarga** registra el acceso de un visitante (IP, navegador y archivo descargado) desde el sitio del proyecto, sin estar vinculada directamente a un usuario del sistema.
 
-- El REPL utiliza una instancia de TableFormatter para dar formato a los resultados devueltos por cualquier conector antes de mostrarlos en consola.
+---
 
-- Los errores generados por los conectores (ConnectionError, SyntaxError, QueryError) son capturados por el REPL, que muestra el mensaje correspondiente sin detener la ejecución.
+## 4. Reglas de negocio
 
-- La variable last_results se llena únicamente tras una consulta de lectura (select/find/get) y es consumida por el comando export.
+### a. Gestión de Usuarios y Roles
 
-- El servidor MCP y el bot de Telegram reutilizan la misma capa de conectores que el REPL, pero restringen su uso a los métodos de solo lectura (execute_query de tipo SELECT, find, get, get_tables, list_collections).
+- Un usuario solo puede tener un rol a la vez (`admin` u otro rol definido en el sistema de permisos).
+- Solo un usuario con rol `admin` puede listar, agregar o gestionar otros usuarios.
+- Toda contraseña se almacena como hash (nunca en texto plano) antes de guardarse en `usuarios.json`.
+- Cada acción relevante del usuario (login, logout, intento fallido) queda registrada en el log de auditoría.
+- Un usuario sin sesión iniciada no puede ejecutar comandos que requieran permisos según el rol.
 
+### b. Gestión de Conexiones y Motores de Base de Datos
 
-# Reglas de Negocio
+- El sistema no posee un motor de base de datos propio; toda consulta se ejecuta contra un motor externo (SQLite, MySQL, PostgreSQL, MongoDB, Redis o Cassandra).
+- Antes de ejecutar cualquier comando, debe existir una conexión activa establecida hacia el motor correspondiente.
+- El tipo de conector a utilizar se determina automáticamente mediante el detector de base de datos (`DetectorBaseDatos`).
+- El esquema externo (tablas y columnas) se obtiene siempre por introspección en tiempo real, nunca se asume ni se cachea de forma permanente.
 
-## a. Gestión de Conexiones
+### c. Gestión de Tareas Programadas
 
-- El sistema no incluye ningún motor de base de datos propio; el usuario debe tener instalado y accesible al menos un motor compatible.
+- Cada tarea programada debe estar vinculada a un usuario que la creó y a un comando SQL válido.
+- Una tarea puede programarse en modalidad única (`at`, a una hora específica) o recurrente (`every`, cada N horas).
+- Una tarea inactiva (`activa = false`) no se ejecuta aunque su hora programada se cumpla.
+- El motor de tareas se ejecuta en un hilo independiente y no bloquea el uso interactivo del REPL.
 
-- Solo puede existir una instancia de conector activa a la vez; para conectarse a un nuevo motor, el usuario debe desconectarse primero (regla reflejada en el atributo 'conector' de la clase REPL).
+### d. Gestión de Bookmarks y Consultas
 
-- Las credenciales de conexión no se almacenan ni se recuerdan entre sesiones; deben ingresarse manualmente en cada ejecución mediante el comando connect.
+- Un alias de bookmark es único; no pueden coexistir dos consultas guardadas con el mismo alias.
+- Solo el usuario propietario puede eliminar o sobrescribir su propio bookmark.
 
-## b. Gestión de Resultados
+### e. Gestión de Analítica y Descargas
 
-- La variable last_results solo se actualiza tras ejecutar una consulta de lectura (select/find/get) y es volátil: se descarta al cerrar el programa o al ejecutar una nueva consulta.
+- Cada descarga del instalador o binario registra IP, user-agent, archivo y fecha, independientemente de si el usuario está autenticado en el sistema.
+- El registro de descargas es de solo escritura desde la aplicación (no se edita ni elimina manualmente).
 
-- El comando export solo tiene efecto si existe un valor previo en last_results; de lo contrario, no genera ningún archivo.
+---
 
-## c. Restricciones de las Integraciones Externas
+## 5. Objetos de la Base de Datos
 
-- Las herramientas expuestas al servidor MCP y al bot de Telegram están restringidas a operaciones de solo lectura (execute_query SELECT, find, get, get_tables, list_collections).
+El sistema *NexusDB / Administrador de BD en consola* no implementa procedimientos almacenados, triggers ni eventos a nivel de motor de base de datos. Esto se debe a que la aplicación no administra un esquema de base de datos propio, sino que actúa como un **cliente intermediario** que se conecta a motores externos (SQLite, MySQL, PostgreSQL, MongoDB, Redis y Cassandra) definidos por el usuario final. La única base de datos gestionada directamente por el sistema (`analytics.sqlite3`) se limita a una tabla de registro de descargas (`downloads`), sin lógica embebida en el motor. Las validaciones y automatizaciones del sistema (autenticación, control de permisos, auditoría de acciones y ejecución de tareas programadas) se implementan a nivel de aplicación, en código Python, y no como objetos del motor de base de datos.
 
-- Cualquier intento de ejecutar un comando de escritura desde el servidor MCP o el bot de Telegram es rechazado automáticamente, independientemente del cliente que lo origine.
+---
 
-## d. Manejo de Errores
+## 6. CONCLUSIONES
 
-- Todo error de sintaxis, conexión o ejecución de consulta es capturado mediante las excepciones ConnectionError, SyntaxError y QueryError, y mostrado al usuario sin finalizar el programa.
+1. El sistema **Administrador de BD en consola (NexusDB)** no posee un motor de base de datos propio; funciona como una capa cliente/intermediaria que se conecta e interactúa con motores externos (SQLite, MySQL, PostgreSQL, MongoDB, Redis y Cassandra), por lo que su "base de datos" real es reducida y de soporte, no el núcleo del sistema.
 
+2. Las estructuras de datos internas del sistema (`usuarios.json`, `tareas.json`, bookmarks, log de auditoría) se implementan como archivos JSON y de texto plano, no como tablas de un motor relacional, lo cual simplifica el despliegue pero limita las garantías de integridad referencial que ofrecería un DBMS tradicional.
 
-# Módulos y Componentes del Sistema
+3. La única base de datos relacional gestionada directamente por el sistema (`analytics.sqlite3`) es mínima, con una sola tabla (`downloads`), enfocada exclusivamente en analítica de uso (descargas del instalador), sin relación con la lógica funcional del CLI.
 
-Dado que el sistema no posee objetos de base de datos propios (triggers, procedimientos almacenados o eventos), esta sección documenta los módulos internos de la aplicación que cumplen un rol equivalente en la organización de la lógica y los datos.
+4. Al no existir un esquema propio con procedimientos almacenados, triggers o eventos, toda la automatización (autenticación, verificación de permisos, auditoría y ejecución de tareas programadas) recae en la capa de aplicación (Python), lo que hace que la robustez del sistema dependa del código y no de mecanismos nativos del motor de base de datos.
 
-| Nombre | Tipo | Módulo Relacionado | Descripción |
-| --- | --- | --- | --- |
-| main.py | Módulo | Aplicación dbcli | Punto de entrada de la aplicación; inicializa el REPL |
-| repl.py | Módulo | REPL | Contiene la clase REPL y el bucle principal de comandos |
-| help.py | Módulo | REPL | Genera el panel de ayuda según el modo de operación activo |
-| export.py | Módulo | REPL | Exporta el contenido de last_results a un archivo CSV |
-| table_formatter.py | Módulo | TableFormatter | Formatea los resultados de las consultas para su presentación en consola |
-| exceptions.py | Módulo | Manejo de Errores | Define las excepciones personalizadas ConnectionError, SyntaxError y QueryError |
-| connectors/base.py | Módulo | BaseConnector / BaseNoSQLConnector | Define las clases base abstractas para todos los conectores |
-| connectors/relacionales/* | Módulo | SQLiteConnector, MySQLConnector, PostgresConnector | Implementaciones concretas de conectores relacionales |
-| connectors/nosql/* | Módulo | MongoDBConnector, RedisConnector, CassandraConnector | Implementaciones concretas de conectores NoSQL |
+5. El diccionario de datos elaborado permite documentar de forma clara qué información gestiona el sistema y cómo se relaciona, sirviendo como base para una eventual migración hacia un modelo de datos persistente y relacional si el proyecto escalara (por ejemplo, mover usuarios, tareas y bookmarks a tablas SQL reales con sus respectivas restricciones e integridad referencial).
 
+6. En conjunto, el análisis confirma que el valor del sistema no está en la complejidad de su propia base de datos, sino en su capacidad de actuar como una herramienta unificada de administración sobre múltiples motores de bases de datos heterogéneos.
 
-# Conclusiones
+---
 
-- El diccionario de datos permitió documentar la estructura interna de una aplicación que, al no poseer una base de datos propia, organiza su información en clases conectoras, variables de sesión volátiles y un módulo de excepciones.
+## 7. RECOMENDACIONES
 
-- La herencia común entre los conectores (BaseConnector y BaseNoSQLConnector) garantiza que el REPL y las integraciones externas (VS Code, MCP, Telegram) trabajen con una interfaz uniforme, independientemente del motor de base de datos conectado.
+1. **Migrar las estructuras internas a un motor relacional real.** Reemplazar `usuarios.json`, `tareas.json` y los bookmarks (actualmente archivos planos) por tablas en SQLite o PostgreSQL, con llaves primarias, foráneas y restricciones (`NOT NULL`, `UNIQUE`), para ganar integridad referencial y evitar corrupción de datos por escritura concurrente.
 
-- La variable last_results concentra el único dato persistente durante la sesión, evidenciando el carácter de intermediario —y no de almacén— que tiene el sistema.
+2. **Cifrar y proteger mejor las credenciales.** Aunque las contraseñas se almacenan como hash, se recomienda migrar de un hash simple a un algoritmo con salt y factor de costo (bcrypt, argon2 o scrypt), y evitar guardar las credenciales de conexión a motores externos en texto plano.
 
-- Las restricciones de solo lectura aplicadas al servidor MCP y al bot de Telegram quedan reflejadas directamente en las restricciones documentadas para los métodos de cada conector.
+3. **Formalizar el log de auditoría como tabla de base de datos.** Actualmente `audit.log` es un archivo de texto; convertirlo en una tabla (`auditoria`) permitiría consultas estructuradas, filtrado por usuario/fecha y generación de reportes de seguridad.
 
-# Recomendaciones
+4. **Implementar respaldos (backups) automáticos** de `analytics.sqlite3` y de los archivos JSON críticos, dado que actualmente no hay un mecanismo de recuperación ante pérdida o corrupción de estos archivos.
 
-- Mantener actualizado este diccionario cada vez que se agregue un nuevo conector, heredando obligatoriamente de BaseConnector o BaseNoSQLConnector.
+5. **Definir políticas de expiración y bloqueo de sesión** más robustas (actualmente el control de intentos fallidos es básico), incluyendo bloqueo temporal tras N intentos fallidos y expiración de sesión por inactividad.
 
-- Documentar explícitamente en el código los tipos de retorno de los métodos abstractos, para facilitar la extensión del sistema por nuevos desarrolladores.
+6. **Documentar y versionar el esquema de `analytics.sqlite3`** mediante migraciones (por ejemplo con Alembic o scripts SQL versionados), para que los cambios futuros a esa tabla queden trazados.
 
-- Evaluar la incorporación de un esquema de configuración (archivo .env o similar) para credenciales, sin comprometer la regla de negocio de no almacenarlas en disco en texto plano.
+7. **Evaluar la necesidad real de procedimientos almacenados/triggers** solo si el sistema evoluciona a administrar su propia base de datos persistente; mientras siga siendo un cliente intermediario, mantener la lógica en la capa de aplicación es la opción más simple y mantenible.
 
-- Para versiones futuras, considerar el registro (logging) de las operaciones de solo lectura realizadas desde el servidor MCP y el bot de Telegram, sin almacenar credenciales.
+8. **Estandarizar el diccionario de datos** como documento vivo: actualizarlo cada vez que se agregue un nuevo campo o entidad (por ejemplo, si se añaden nuevas features con persistencia propia), para que no quede desactualizado respecto al código.
 
-# Bibliografía
+---
 
-Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). Design Patterns: Elements of Reusable Object-Oriented Software. Addison-Wesley.
+## 8. BIBLIOGRAFÍA
 
-Silberschatz, A., Korth, H. F., & Sudarshan, S. (2019). Database System Concepts (7ª ed.). McGraw-Hill Education.
-
-Python Software Foundation. (2026). The Python Standard Library. Recuperado de https://docs.python.org/3/
-
-Pallets/Rich Project. (2026). Rich Documentation. Recuperado de https://rich.readthedocs.io/
+- Elmasri, R. & Navathe, S. (2016). *Fundamentals of Database Systems*. 7th Edition. Pearson.
+- Date, C. J. (2004). *An Introduction to Database Systems*. Addison-Wesley.
+- Coronel, C. & Morris, S. (2017). *Database Systems: Design, Implementation, and Management*. Cengage Learning.
