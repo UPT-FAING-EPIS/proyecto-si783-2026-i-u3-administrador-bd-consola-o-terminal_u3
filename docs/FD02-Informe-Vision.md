@@ -42,7 +42,9 @@ Tacna – Perú
 | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES |
 | --- | --- | --- | --- | --- | --- |
 | Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
-| 1.0 | MPV | ELV | ARV | 26/04/2026 | Versión Original |
+| 1.0 | DJ - CM | PCQ | PCQ | 26/04/2026 | Versión Original |
+| 2.0 | DJ - CM | PCQ | PCQ | 06/06/2026 | Versión 2.0 |
+| 3.0 | DJ - CM | PCQ | PCQ | 06/07/2026 | Versión Final |
 
 
 
@@ -61,13 +63,15 @@ Tacna – Perú
 # Documento de Visión
 
 
-# Versión {1.0}
+# Versión 3.0
 
 
 | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES |
 | --- | --- | --- | --- | --- | --- |
 | Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
-| 1.0 | MPV | ELV | ARV | 26/04/2026 | Versión Original |
+| 1.0 | DJ - CM | PCQ | PCQ | 26/04/2026 | Versión Original |
+| 2.0 | DJ - CM | PCQ | PCQ | 06/06/2026 | Versión 2.0 |
+| 3.0 | DJ - CM | PCQ | PCQ | 06/07/2026 | Versión Final |
 
 
 

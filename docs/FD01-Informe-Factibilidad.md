@@ -56,7 +56,7 @@ Tacna – Perú
 # Informe de Factibilidad
 
 
-# Versión {1.0}
+# Versión 3.0
 
 
 
@@ -76,7 +76,9 @@ Tacna – Perú
 | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES | CONTROL DE VERSIONES |
 | --- | --- | --- | --- | --- | --- |
 | Versión | Hecha por | Revisada por | Aprobada por | Fecha | Motivo |
-| 1.0 | DJ - CM | PCQ | PCQ | 3/7/2026 | Versión Original |
+| 1.0 | DJ - CM | PCQ | PCQ | 26/04/2026 | Versión Original |
+| 2.0 | DJ - CM | PCQ | PCQ | 06/06/2026 | Versión 2.0 |
+| 3.0 | DJ - CM | PCQ | PCQ | 06/07/2026 | Versión Final |
 
 
 
