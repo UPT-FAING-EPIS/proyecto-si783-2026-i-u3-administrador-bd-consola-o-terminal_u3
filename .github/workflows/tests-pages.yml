@@ -24,6 +24,9 @@ concurrency:
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
