@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
         with:
           python-version: '3.9'
 
@@ -25,7 +25,9 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Ejecutar Snyk para buscar vulnerabilidades
-        uses: snyk/actions/python@master
+        # snyk/actions no publica tags versionados estables; se fija al commit
+        # más reciente de master en vez de depender de la rama mutable directamente.
+        uses: snyk/actions/python@8e119fbb6c251787721d34ba683ed48eba792766
         continue-on-error: true # Para que no bloquee tu avance si encuentra algo, pero que el reporte aparezca
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
